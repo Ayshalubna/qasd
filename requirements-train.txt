@@ -1,0 +1,8 @@
+# Training and export. Install PyTorch first for your platform, e.g. CPU only:
+#   pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
+-r requirements.txt
+transformers==5.19.0
+peft==0.21.2
+scikit-learn==1.7.2
+onnx==1.23.2
+mlflow-skinny==3.16.1
