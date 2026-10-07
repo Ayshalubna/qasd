@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qasd — banking intent routing</title>
+<meta name="description" content="A DistilBERT model fine-tuned with LoRA routes bank customer messages to the right team. Runs in your browser.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F2D3A'/%3E%3Cpath d='M8 16h10M14 10l6 6-6 6' stroke='%2367D3C0' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="mark" href="#/"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 16h10M14 10l6 6-6 6" stroke="#67D3C0" stroke-width="3" fill="none" stroke-linecap="round"/></svg><b>Qasd</b><span lang="ar">قصد</span></a>
+  <nav class="nav" aria-label="Main"><a href="#/">Route a message</a><a href="#/results">Fine-tuning results</a><a href="#/how">How it works</a></nav>
+  <a class="gh" href="https://github.com/Ayshalubna/qasd" rel="noopener">GitHub ↗</a>
+</header>
+<main id="main" tabindex="-1"><p class="loading">Loading…</p></main>
+<footer class="foot">
+  <p>Data: Banking77 (PolyAI, CC BY 4.0), 13,083 real-style customer messages, 77 intents. Model: DistilBERT fine-tuned with LoRA, exported to int8 ONNX.</p>
+  <p>Built by Ayesha Lubna · <a href="https://github.com/Ayshalubna/qasd" rel="noopener">Source code on GitHub</a></p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
