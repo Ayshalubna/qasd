@@ -52,11 +52,25 @@ def to_onnx(model_dir: Path, out: Path) -> Path:
     return path
 
 
-def quantise(fp32: Path) -> Path:
+# int8 recipes tried in order; the one that agrees best with PyTorch is shipped (all are reported)
+RECIPES = {
+    "per_channel_head_fp32": {"per_channel": True, "keep_head": True},   # classifier layers stay in full precision
+    "per_channel": {"per_channel": True, "keep_head": False},
+    "per_tensor": {"per_channel": False, "keep_head": False},
+}
+
+
+def quantise(fp32: Path, recipe: str = "per_channel_head_fp32", dest: Path | None = None) -> Path:
+    import onnx
     from onnxruntime.quantization import QuantType, quantize_dynamic
 
-    q = fp32.with_name("model_quantized.onnx")
-    quantize_dynamic(str(fp32), str(q), weight_type=QuantType.QInt8)
+    r = RECIPES[recipe]
+    exclude = []
+    if r["keep_head"]:          # the last two matrix multiplications are pre_classifier and classifier
+        mm = [n.name for n in onnx.load(str(fp32), load_external_data=False).graph.node if n.op_type in ("MatMul", "Gemm")]
+        exclude = mm[-2:]
+    q = dest or fp32.with_name("model_quantized.onnx")
+    quantize_dynamic(str(fp32), str(q), weight_type=QuantType.QInt8, per_channel=r["per_channel"], nodes_to_exclude=exclude)
     return q
 
 
@@ -113,8 +127,16 @@ def main() -> None:
     if out.exists():
         shutil.rmtree(out)
     fp32 = to_onnx(run_dir / "model", out)
-    quantise(fp32)
+    trials = {}
+    for recipe in RECIPES:
+        quantise(fp32, recipe)
+        trials[recipe] = check(out, run_dir)["onnx_int8"]
+        print(f"int8 recipe {recipe}: {trials[recipe]}", flush=True)
+    best = max(trials, key=lambda k: (trials[k]["agreement_with_pytorch"], -trials[k]["size_mb"]))
+    quantise(fp32, best)
     result = check(out, run_dir)
+    result["int8_recipe"] = best
+    result["int8_recipes_tried"] = trials
     if not a.keep_fp32:
         fp32.unlink()
     (out / "export_check.json").write_text(json.dumps(result, indent=1))

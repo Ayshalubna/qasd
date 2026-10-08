@@ -18,6 +18,8 @@ EXPORT = Path(os.getenv("QASD_EXPORT", ROOT / "export"))     # ONNX model served
 MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", (ROOT / "mlruns").as_uri())   # local file store; any MLflow server works too
 os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
 os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
+os.environ.setdefault("MLFLOW_DISABLE_TELEMETRY", "true")
+os.environ.setdefault("DO_NOT_TRACK", "true")
 
 # The three ways of adapting the same pretrained model that are compared
 METHODS = {
