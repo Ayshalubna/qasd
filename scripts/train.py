@@ -2,6 +2,7 @@
 
     python -m scripts.train                       # DistilBERT, as in CI (about 40-60 minutes on a 4-core CPU)
     python -m scripts.train --base /tmp/tiny --epochs 1 --limit 600     # quick offline check with a tiny model
+    python -m scripts.train --skip-training       # CI: each method trains in its own parallel job, this step reports
 Each method runs in its own process so peak memory is measured per method.
 """
 from __future__ import annotations
@@ -75,8 +76,9 @@ def main() -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--methods", default="head,lora,full")
     ap.add_argument("--no-gates", action="store_true")
+    ap.add_argument("--skip-training", action="store_true", help="only export and report (runs/ already filled, e.g. by parallel CI jobs)")
     a = ap.parse_args()
-    for method in a.methods.split(","):
+    for method in ([] if a.skip_training else a.methods.split(",")):
         cmd = [sys.executable, "-m", "qasd.train", "--method", method, "--base", a.base]
         if a.epochs:
             cmd += ["--epochs", str(a.epochs)]
