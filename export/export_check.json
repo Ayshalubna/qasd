@@ -1,0 +1,35 @@
+{
+ "onnx_fp32": {
+  "test_accuracy": 0.9198051948051948,
+  "agreement_with_pytorch": 1.0,
+  "size_mb": 268.2,
+  "latency_ms_single_query_1_thread": 14.26
+ },
+ "onnx_int8": {
+  "test_accuracy": 0.910064935064935,
+  "agreement_with_pytorch": 0.9678571428571429,
+  "size_mb": 67.6,
+  "latency_ms_single_query_1_thread": 3.33
+ },
+ "int8_recipe": "per_channel_head_fp32",
+ "int8_recipes_tried": {
+  "per_channel_head_fp32": {
+   "test_accuracy": 0.910064935064935,
+   "agreement_with_pytorch": 0.9678571428571429,
+   "size_mb": 67.6,
+   "latency_ms_single_query_1_thread": 3.23
+  },
+  "per_channel": {
+   "test_accuracy": 0.910064935064935,
+   "agreement_with_pytorch": 0.9678571428571429,
+   "size_mb": 67.6,
+   "latency_ms_single_query_1_thread": 3.42
+  },
+  "per_tensor": {
+   "test_accuracy": 0.9061688311688312,
+   "agreement_with_pytorch": 0.9587662337662337,
+   "size_mb": 67.4,
+   "latency_ms_single_query_1_thread": 3.15
+  }
+ }
+}
