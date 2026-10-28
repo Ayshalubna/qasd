@@ -18,7 +18,7 @@ from pathlib import Path
 from qasd.config import BASE_MODEL, EXPORT, METHODS, ROOT, RUNS
 
 DEPLOY = "lora"
-GATES = {"lora_min_accuracy": 0.85, "lora_max_trainable_pct": 2.0, "int8_min_agreement": 0.98}
+GATES = {"lora_min_accuracy": 0.85, "lora_max_trainable_pct": 2.0, "int8_max_accuracy_drop": 0.015}
 
 
 def findings(m: dict, ex: dict) -> list[str]:
@@ -107,8 +107,9 @@ def main() -> int:
         fails.append(f"LoRA accuracy {lora['test_accuracy']:.3f} < {GATES['lora_min_accuracy']}")
     if lora["trainable_pct"] > GATES["lora_max_trainable_pct"]:
         fails.append(f"LoRA trains {lora['trainable_pct']:.2f}% of weights")
-    if ex["onnx_int8"]["agreement_with_pytorch"] < GATES["int8_min_agreement"]:
-        fails.append(f"int8 agreement {ex['onnx_int8']['agreement_with_pytorch']:.3f} < {GATES['int8_min_agreement']}")
+    drop = lora["test_accuracy"] - ex["onnx_int8"]["test_accuracy"]
+    if drop > GATES["int8_max_accuracy_drop"]:
+        fails.append(f"int8 model loses {100 * drop:.1f} accuracy points (limit {100 * GATES['int8_max_accuracy_drop']:.1f})")
     if fails:
         print("GATE FAILED:\n  " + "\n  ".join(fails))
         return 1
